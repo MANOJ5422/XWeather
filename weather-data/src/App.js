@@ -40,22 +40,37 @@ const App = () => {
           value={city}
           onChange={(e) => setCity(e.target.value)}
         />
-        <button onClick={fetchWeatherData}>Search</button>
+        <button onClick={fetchWeatherData} style={{ backgroundColor: "green" }}>
+          Search
+        </button>
       </div>
 
-      {isLoading && <p>Loading data…</p>}
-
-      <div className="weather-cards">
-        {weatherData && (
-          <div className="weather-card">
-            <h2>Weather in {city}</h2>
-            <p><strong>Temperature:</strong> {weatherData.temp_c}°C</p>
-            <p><strong>Humidity:</strong> {weatherData.humidity}%</p>
-            <p><strong>Condition:</strong> {weatherData.condition.text}</p>
-            <p><strong>Wind Speed:</strong> {weatherData.wind_kph} kph</p>
-          </div>
-        )}
-      </div>
+      {isLoading ? (
+        <p>Loading data…</p>
+      ) : (
+        <div className="weather-cards">
+          {weatherData && (
+            <>
+              <div className="weather-card">
+                <h2>Temperature</h2>
+                <p>{weatherData.temp_c}°C</p>
+              </div>
+              <div className="weather-card">
+                <h2>Humidity</h2>
+                <p>{weatherData.humidity}%</p>
+              </div>
+              <div className="weather-card">
+                <h2>Condition</h2>
+                <p>{weatherData.condition.text}</p>
+              </div>
+              <div className="weather-card">
+                <h2>Wind Speed</h2>
+                <p>{weatherData.wind_kph} kph</p>
+              </div>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 };
