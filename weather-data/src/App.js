@@ -22,7 +22,9 @@ const App = () => {
 
     try {
       const response = await fetch(
-        `${API_ENDPOINT}?key=376d61c7b2a84f10a96182523242511&q=${encodeURIComponent(city)}`
+        `${API_ENDPOINT}?key=376d61c7b2a84f10a96182523242511&q=${encodeURIComponent(
+          city
+        )}`
       );
 
       if (!response.ok) {
@@ -54,7 +56,7 @@ const App = () => {
 
       {loading && <p>Loading data…</p>}
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {/* {error && <p style={{ color: "red" }}>{error}</p>} */}
 
       {weatherData && (
         <div className="weather-cards">
