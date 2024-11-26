@@ -1,77 +1,82 @@
 import React, { useState } from "react";
-import "./App.css"; // Add some CSS styling
+import "./App.css"; // Optional for styling
+
+const API_KEY = "your_api_key_here"; // Replace with your WeatherAPI key
+const API_ENDPOINT = "https://api.weatherapi.com/v1/current.json";
 
 const App = () => {
   const [city, setCity] = useState("");
   const [weatherData, setWeatherData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const fetchWeatherData = async () => {
-    if (!city) return; // Do nothing if city input is empty
-    setIsLoading(true);
-    setError(false);
+    if (!city.trim()) {
+      alert("Please enter a city name.");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
     setWeatherData(null);
 
     try {
       const response = await fetch(
-        `https://api.weatherapi.com/v1/current.json?key=376d61c7b2a84f10a96182523242511&q=${city}`
+        `${API_ENDPOINT}?key=376d61c7b2a84f10a96182523242511&q=${encodeURIComponent(city)}`
       );
 
-      if (!response.ok) throw new Error("City not found");
+      if (!response.ok) {
+        throw new Error("Failed to fetch weather data");
+      }
 
       const data = await response.json();
-      setWeatherData(data.current);
-    } catch (error) {
-      setError(true);
-      alert("Failed to fetch weather data");
+      setWeatherData(data);
+    } catch (err) {
+      setError("Failed to fetch weather data");
+      alert(err.message);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <>
-      <h1>Weather App</h1>
-      <div className="search-bar">
+    <div className="App">
+      <h1>Weather Application</h1>
+      <div>
         <input
           type="text"
           placeholder="Enter city name"
           value={city}
           onChange={(e) => setCity(e.target.value)}
         />
-        <button onClick={fetchWeatherData} style={{ backgroundColor: "green" }}>
-          Search
-        </button>
+        <button onClick={fetchWeatherData}>Search</button>
       </div>
 
-      {isLoading ? (
-        <p>Loading data…</p>
-      ) : (
+      {loading && <p>Loading data…</p>}
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {weatherData && (
         <div className="weather-cards">
-          {weatherData && (
-            <>
-              <div className="weather-card">
-                <h2>Temperature</h2>
-                <p>{weatherData.temp_c}°C</p>
-              </div>
-              <div className="weather-card">
-                <h2>Humidity</h2>
-                <p>{weatherData.humidity}%</p>
-              </div>
-              <div className="weather-card">
-                <h2>Condition</h2>
-                <p>{weatherData.condition.text}</p>
-              </div>
-              <div className="weather-card">
-                <h2>Wind Speed</h2>
-                <p>{weatherData.wind_kph} kph</p>
-              </div>
-            </>
-          )}
+          <div className="weather-card">
+            <h2>Temperature</h2>
+            <p>{weatherData.current.temp_c}°C</p>
+          </div>
+          <div className="weather-card">
+            <h2>Humidity</h2>
+            <p>{weatherData.current.humidity}%</p>
+          </div>
+          <div className="weather-card">
+            <h2>Condition</h2>
+            <p>{weatherData.current.condition.text}</p>
+          </div>
+          <div className="weather-card">
+            <h2>Wind Speed</h2>
+            <p>{weatherData.current.wind_kph} kph</p>
+          </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
